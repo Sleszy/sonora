@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buscar · Sonora</title>
+  <meta name="description" content="Sonora: aplicación web de música con reproducción simulada, hecha con el sistema de diseño Sonora.">
+  <link rel="icon" href="assets/logos/sonora-mark-dark.svg" type="image/svg+xml">
+  <!-- El tema se aplica antes de pintar para que no parpadee -->
+  <script>try { document.documentElement.dataset.theme = new URLSearchParams(location.search).get('tema') || localStorage.getItem('sonora-tema') || 'dark'; } catch (_) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Manrope:wght@400;500;700;800&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <style type="text/tailwindcss">
+    /* Tokens de Sonora (css/tokens.css) conectados a Tailwind: nada de hexadecimales sueltos */
+    @theme inline {
+      --color-surface-base: var(--surface-base); --color-surface-raised: var(--surface-raised);
+      --color-surface-high: var(--surface-high); --color-line: var(--line); --color-line-strong: var(--line-strong);
+      --color-ink: var(--ink); --color-ink-muted: var(--ink-muted);
+      --color-accent: var(--accent); --color-accent-hover: var(--accent-hover); --color-on-accent: var(--on-accent);
+      --color-success: var(--success); --color-danger: var(--danger); --color-focus: var(--focus);
+      --font-sans: "Manrope", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --radius-pill: 999px;
+      --shadow-raise: 0 8px 24px rgb(0 0 0 / 0.4);
+      /* Escala tipográfica de tokens.json */
+      --text-display: 56px; --text-display--line-height: 58px; --text-display--letter-spacing: -0.02em; --text-display--font-weight: 800;
+      --text-title: 32px; --text-title--line-height: 36px; --text-title--letter-spacing: -0.01em; --text-title--font-weight: 800;
+      --text-heading: 20px; --text-heading--line-height: 26px; --text-heading--font-weight: 700;
+      --text-body: 16px; --text-body--line-height: 24px; --text-body--font-weight: 400;
+      --text-body-sm: 14px; --text-body-sm--line-height: 20px; --text-body-sm--font-weight: 500;
+      --text-caption: 12px; --text-caption--line-height: 16px; --text-caption--letter-spacing: 0.06em; --text-caption--font-weight: 700;
+      --text-mono: 14px; --text-mono--line-height: 20px; --text-mono--font-weight: 400;
+      --text-mono-sm: 12px; --text-mono-sm--line-height: 16px; --text-mono-sm--font-weight: 400;
+    }
+    @layer base {
+      body { @apply bg-surface-base font-sans text-body text-ink antialiased; }
+      /* Anillo de enfoque sólido de 3px en focus, con 2px de separación, en todo control */
+      :where(a, button, input, [tabindex]):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+      /* Me gusta activo: el corazón se rellena (no depende solo del color) */
+      [data-favorita][aria-pressed="true"] path, [data-accion="favorita-actual"][aria-pressed="true"] path { fill: currentColor; }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0ms !important; } }
+    }
+  </style>
+</head>
+<body data-pagina="buscar">
+  <a href="#contenido" data-saltar class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-pill focus:bg-surface-high focus:px-4 focus:py-2 focus:text-body-sm focus:font-bold">Saltar al contenido</a>
+
+  <main id="contenido" tabindex="-1" class="px-4 pb-44 pt-6 lg:ml-60 lg:px-8 lg:pb-32 lg:pt-8">
+    <h1 class="text-title">Buscar</h1>
+    <form role="search" class="mt-6" onsubmit="return false">
+      <label for="campo-busqueda" class="sr-only">Busca canciones, artistas o playlists</label>
+      <div class="relative max-w-xl">
+        <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted"><svg class="size-5" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></g></svg></span>
+        <input id="campo-busqueda" type="search" autocomplete="off" placeholder="Canción, artista o playlist"
+          class="w-full rounded-pill border-2 border-line-strong bg-surface-high py-3 pl-12 pr-4 text-body-sm text-ink placeholder:text-ink-muted focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-focus">
+      </div>
+    </form>
+    <div id="tipos" role="group" aria-label="Tipo de resultado" class="mt-4 flex flex-wrap gap-2"></div>
+    <p id="resumen" aria-live="polite" class="mt-6 font-mono text-mono-sm text-ink-muted"></p>
+
+    <section id="res-canciones" aria-labelledby="t-res-canciones" class="mt-4">
+      <h2 id="t-res-canciones" class="mb-4 text-heading">Canciones</h2>
+      <div id="lista-canciones" class="rounded-md bg-surface-raised p-2"></div>
+    </section>
+    <section id="res-playlists" aria-labelledby="t-res-playlists" class="mt-8">
+      <h2 id="t-res-playlists" class="mb-4 text-heading">Playlists</h2>
+      <ul id="lista-playlists" class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5"></ul>
+    </section>
+    <p id="sin-resultados" hidden class="mt-8 rounded-md bg-surface-raised p-6 text-body text-ink-muted">No encontramos nada con esas palabras. Prueba con el nombre de una canción o de un artista.</p>
+  </main>
+
+  <script src="js/datos.js"></script>
+  <script src="js/componentes.js"></script>
+  <script src="js/reproductor.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/paginas.js"></script>
+</body>
+</html>

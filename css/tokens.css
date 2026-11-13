@@ -1,0 +1,18 @@
+/* Sonora: variables de tema (oscuro por defecto, claro con data-theme="light") */
+
+:root, [data-theme="dark"] {
+  --surface-base:#0e0e10; --surface-raised:#18181b; --surface-high:#26262b;
+  --line:#3a3a42; --line-strong:#7a7a86; --ink:#f4f2ee; --ink-muted:#a9a9b4;
+  --accent:#ffb020; --accent-hover:#ffc24d; --on-accent:#14110a;
+  --success:#5ec8e5; --danger:#ff6b5b; --focus:#8fd3ff;
+}
+[data-theme="light"] {
+  --surface-base:#faf8f4; --surface-raised:#ffffff; --surface-high:#ece8e0;
+  --line:#d9d4c9; --line-strong:#6b665c; --ink:#17151a; --ink-muted:#55525c;
+  --accent:#a65500; --accent-hover:#8a4500; --on-accent:#ffffff;
+  --success:#0a6d8f; --danger:#b3261e; --focus:#0b5cad;
+}
+
+
+body{background:var(--surface-base);color:var(--ink);font-family:"Manrope",system-ui,sans-serif}
+:root{--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--radius-sm:4px;--radius-md:8px;--radius-lg:16px;--radius-pill:999px;--shadow-raise:0 8px 24px rgb(0 0 0 / .4);--font-sans:"Manrope",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace}
