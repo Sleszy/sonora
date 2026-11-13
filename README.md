@@ -5,6 +5,8 @@ La reproducción es simulada: no hay audio, un temporizador avanza el progreso.
 
 Autor: Oscar Arturo Preciado Urbina (230111118) · Programación web ISC 7A · ITS José Mario Molina Pasquel y Henríquez, Lagos de Moreno.
 
+**Sitio publicado:** https://sleszy.github.io/sonora/
+
 ## Cómo ejecutarlo
 
 No necesita instalar nada. Tailwind CSS v4 se carga desde su CDN oficial y las fuentes desde Google Fonts.
